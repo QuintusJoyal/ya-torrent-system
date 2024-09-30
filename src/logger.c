@@ -1,5 +1,4 @@
 #include "logger.h"
-#include <stdarg.h>
 
 #define LOG_FILE "log.txt"  // Define the log file path
 
