@@ -3,8 +3,10 @@
 
 !src/
 !include/
-!tests/
+!tests/*.c
+!utils/
 
 !.gitignore
 !Makefile
 !README.md
+!Dockerfile

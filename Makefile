@@ -11,16 +11,16 @@ BINDIR = bin
 TESTDIR = tests
 TESTBUILDDIR = $(TESTDIR)/$(BUILDDIR)
 TESTBINDIR = $(TESTDIR)/$(BINDIR)
+UTILSDIR = utils
 
 # Create output directories if they don't exist
 $(shell mkdir -p $(BUILDDIR) $(BINDIR) $(TESTBUILDDIR) $(TESTBINDIR))
 
 # Executables
-# CLIENT_EXEC = $(BINDIR)/client
 CLIENT_EXEC = $(BINDIR)/cli2219
-# SERVER_EXEC = $(BINDIR)/server
 SERVER_EXEC = $(BINDIR)/srv6088
 TEST_CLIENT_EXEC = $(TESTBINDIR)/test_client
+CREATEFILE_EXEC = $(BINDIR)/createfile
 
 # Source files
 CLIENT_SRC = $(SRCDIR)/client.c
@@ -29,6 +29,7 @@ SERVER_SRC = $(SRCDIR)/server.c
 SRV6088_SRC = $(SRCDIR)/srv6088.c
 LOGGER_SRC = $(SRCDIR)/logger.c
 PROTOCOL_SRC = $(SRCDIR)/protocol.c
+CREATEFILE_SRC = $(UTILSDIR)/createfile.c
 
 # Test source files
 TEST_CLIENT_SRC = $(TESTDIR)/test_client.c
@@ -40,12 +41,13 @@ SERVER_OBJ = $(BUILDDIR)/server.o
 SRV6088_OBJ = $(BUILDDIR)/srv6088.o
 LOGGER_OBJ = $(BUILDDIR)/logger.o
 PROTOCOL_OBJ = $(BUILDDIR)/protocol.o
+CREATEFILE_OBJ = $(BUILDDIR)/createfile.o
 
 # Test object files
 TEST_CLIENT_OBJ = $(TESTBUILDDIR)/test_client.o
 
 # Build all (default target)
-all: $(CLIENT_EXEC) $(SERVER_EXEC) $(TEST_CLIENT_EXEC)
+all: $(CLIENT_EXEC) $(SERVER_EXEC) $(TEST_CLIENT_EXEC) $(CREATEFILE_EXEC)
 
 # Compile protocol object
 $(PROTOCOL_OBJ): $(PROTOCOL_SRC) $(INCDIR)/protocol.h
@@ -58,13 +60,19 @@ $(LOGGER_OBJ): $(LOGGER_SRC) $(INCDIR)/logger.h
 # Compile client object
 $(CLIENT_OBJ): $(CLIENT_SRC) $(INCDIR)/client.h $(INCDIR)/logger.h $(INCDIR)/protocol.h
 	$(CC) $(CFLAGS) -c $< -o $@
+
 $(CLI2219_OBJ): $(CLI2219_SRC) $(INCDIR)/client.h $(INCDIR)/logger.h $(INCDIR)/protocol.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Compile server object
 $(SERVER_OBJ): $(SERVER_SRC) $(INCDIR)/server.h $(INCDIR)/logger.h $(INCDIR)/protocol.h
 	$(CC) $(CFLAGS) -c $< -o $@
+
 $(SRV6088_OBJ): $(SRV6088_SRC) $(INCDIR)/server.h $(INCDIR)/logger.h $(INCDIR)/protocol.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Compile createfile object
+$(CREATEFILE_OBJ): $(CREATEFILE_SRC)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Compile test client object
@@ -78,6 +86,10 @@ $(CLIENT_EXEC): $(CLI2219_OBJ) $(CLIENT_OBJ) $(LOGGER_OBJ) $(PROTOCOL_OBJ)
 # Link server executable
 $(SERVER_EXEC): $(SRV6088_OBJ) $(SERVER_OBJ) $(LOGGER_OBJ) $(PROTOCOL_OBJ)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+
+# Link createfile executable
+$(CREATEFILE_EXEC): $(CREATEFILE_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@
 
 # Link test client executable
 $(TEST_CLIENT_EXEC): $(TEST_CLIENT_OBJ) $(CLIENT_OBJ) $(LOGGER_OBJ) $(PROTOCOL_OBJ)
