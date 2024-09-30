@@ -1,0 +1,10 @@
+# Ignore everything
+/*
+
+!src/
+!include/
+!tests/
+
+!.gitignore
+!Makefile
+!README.md
